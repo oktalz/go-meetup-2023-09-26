@@ -1,0 +1,359 @@
+# Go talks 
+
+Zlatko Bratkovic
+
+zlatko.bratkovic@gmail.com
+
+## Meetup
+
+.background https://camo.githubusercontent.com/2b507540e2681c1a25698f246b9dca69c30548ed66a7323075b0224cbb1bf058/68747470733a2f2f676f6c616e672e6f72672f646f632f676f706865722f6669766579656172732e6a7067
+
+ 
+  
+   
+
+.image https://miro.medium.com/v2/resize:fit:720/format:webp/1*hkssi0vXpvEVh2grkR4FOw.png _ 300
+
+
+## Presentation
+
+&nbsp;
+
+    go install github.com/oktalz/go-tools-fork/cmd/present@latest
+
+&nbsp;
+
+- WIP
+- similar to original version
+    - full screen presentations
+    - run can expand if output is large
+    - no click to next section
+        - `'r'` to run code snippet
+        - `'c'` to close terminal view
+    - not perfect, scaling/zoom can revert behavior
+    - TODO make fonts a bit bigger to avoid zoom
+
+## Go
+
+accepted:
+- net/http: enhanced ServeMux routing [#61410](https://go.dev/issue/48429)
+- cmd/go: track tool dependencies in go.mod [#48429](https://go.dev/issue/48429)
+- net/http: enhanced ServeMux routing [#61410](https://go.dev/issue/61410)
+- time: stop requiring Timer/Ticker.Stop for prompt GC [#61542](https://go.dev/issue/61542)
+
+likely accept: 
+- math/rand/v2: revised API for math/rand [#61716](https://go.dev/issue/61716)
+- testing: add Keep, to force evaluation in benchmarks [#61179](https://go.dev/issue/61179)
+- testing: add testing.B.Loop for iteration [#61515](https://go.dev/issue/61515)
+
+## Go
+
+discussions:
+- net/http: move HTTP/2 into the standard library [#60746](https://go.dev/issue/60746)
+- gonew: templates for new modules [#61669](https://go.dev/issue/61669)
+- metrics for the standard library [#61638](https://go.dev/issue/61638)
+
+proposals:
+- spec: add range over int, range over func [#61405](https://go.dev/issue/61405)
+    - maps: add maps.KeysSlice and maps.ValuesSlice [#61626](https://go.dev/issue/61626)
+- io/fs, net/http: define interface for automatic ETag serving [#60940](https://go.dev/issue/60940)
+
+
+## log/slog
+
+&nbsp;
+
+- structured logging
+
+&nbsp;
+
+.play -edit slog\main.go 
+
+## log/slog - filename
+
+&nbsp;
+
+.play -edit slog2\main.go /^//START/,/^//END/
+
+## min & max
+
+&nbsp;
+
+.play -edit min_max\hello.go /^//START/,/^//END/ 
+
+
+## min & max
+
+&nbsp;
+
+.play -edit min_max3\hello.go /^//START/,/^//END/ 
+
+## clear
+
+&nbsp;
+
+- clear "zeros" all elements from a map, slice, or type parameter type
+
+&nbsp;
+
+.play -edit clear\main.go  /^//START/,/^//END/
+
+## slices package
+
+&nbsp;
+
+.play -edit slices\main.go /^//START/,/^//END/
+
+## slices package
+
+&nbsp;
+
+.play -edit slices2\main.go /^//START/,/^//END/
+
+- removes the elements s[i:j] from s, returning the modified slice. 
+- panics if s[i:j] is not a valid slice of s. 
+- complexity is O(len(s)-j), so if many items must be deleted, it is better to make a single call deleting them all together than to delete one at a time. 
+- might not modify the elements. If those elements contain pointers you might consider zeroing those elements so that objects they reference can be garbage collected.
+
+## maps package - clone
+
+&nbsp;
+
+.play -edit maps\main.go /^//START/,/^//END/
+
+## maps package - copy
+
+&nbsp;
+
+.play -edit maps2\main.go /^//START/,/^//END/
+
+## loopvar experiment
+
+&nbsp;
+
+.play -edit loopvar\main.go /^//START/,/^//END/
+
+## go toolchain
+
+&nbsp;
+
+    module gitlab.com/my/package
+
+    go 1.21
+
+    toolchain go1.21.1
+
+- automatic downloading of toolchain
+- run, tidy, get all are respecting toolchain
+- consistend builds
+- works with go.work
+
+## Profile-guided optimization
+
+&nbsp;
+
+1. Build and release an initial binary (without PGO).
+2. Collect profiles from production.
+3. Build from the latest source and provide the production profile.
+4. ⟳ -> 2.
+
+## Profile-guided optimization
+
+&nbsp;
+
+- By default, go build will detect default.pgo files automatically and enable PGO
+- collect multiple profiles at different times from different instances
+    - go tool pprof -proto a.pprof b.pprof > default.pprof
+- continuous profiling?
+- iterative stability
+    - Source stability is achieved using heuristics to match samples from the profile to the compiling source
+- single binary used for different workload types?
+
+## Profile-guided optimization - source stability and refactoring
+
+&nbsp;
+
+- Many common changes will not break matching, including:
+    - Changes in a file outside of a hot function (adding/changing code above or below the function).
+    - Moving a function to another file in the same package (the compiler ignores source filenames altogether).
+- Some changes that may break matching:
+    - Changes within a hot function (may affect line offsets).
+    - Renaming the function (and/or type for methods) (changes symbol name).
+    - Moving the function to another package (changes symbol name).
+
+## Web applications, scraping and telegram bots
+
+.background img\back-cloud.jpeg
+
+## Problem 
+
+&nbsp;
+&nbsp;
+
+- web application
+- no api
+- auto logoff
+
+## Web scraping
+
+&nbsp;
+
+net/http
+
+    httpClient: &http.Client{
+		Timeout: Timeout,
+		Jar:     jar,
+	}
+
+github.com/PuerkitoBio/goquery
+
+    doc.Find("div.content > div.table-container.new-table").
+		Each(func(i int, table *goquery.Selection) {
+			subject, subjectOK := table.Attr("data-action-id")
+			if !subjectOK {
+				return
+			}
+            ...
+
+## Web scraping
+
+github.com/gocolly/colly
+
+    c := colly.NewCollector()
+    c.Visit("https://en.wikipedia.org/wiki/Main_Page")
+
+    c.OnRequest(func(r *colly.Request) { 
+        fmt.Println("Visiting: ", r.URL) 
+    }) 
+    
+    c.OnError(func(_ *colly.Response, err error) { 
+        log.Println("Something went wrong: ", err) 
+    }) 
+    
+    c.OnResponse(func(r *colly.Response) { 
+        fmt.Println("Page visited: ", r.Request.URL) 
+    }) 
+    
+    c.OnHTML("a", func(e *colly.HTMLElement) { 
+        // printing all URLs associated with the a links in the page 
+        fmt.Println("%v", e.Attr("href")) 
+    }) 
+    
+    c.OnScraped(func(r *colly.Response) { 
+        fmt.Println(r.Request.URL, " scraped!") 
+    })
+    
+
+## github.com/chromedp/chromedp
+
+## chromedp - using Chrome
+
+&nbsp;
+
+github.com/chromedp/chromedp
+
+- Chrome is run in headless mode
+    - Chrome DevTools Protocol
+
+- various options
+
+Example:
+
+    opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.DisableGPU,
+		chromedp.UserDataDir(dir),
+	)
+
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+	defer cancel()
+
+## chromedp - setup
+
+&nbsp;
+
+.code topic/chromedev.go
+
+## chromedp - intercepting network requests
+
+&nbsp;
+
+.code topic/scan.go
+
+## chromedp - waiting events
+
+&nbsp;
+
+.code topic/submit.go
+
+## chromedp - more complex scan
+
+&nbsp;
+
+.code topic/chromedev2.go
+
+## 'new' UI
+
+.image https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/2048px-Telegram_logo.svg.png _ 300
+
+- do we need web application?
+    - simplicity, hosting ...
+- are users OK with using chat application
+- is telegram secure ?
+
+## Telegram - setup
+
+&nbsp;
+
+github.com/go-telegram-bot-api/telegram-bot-api/v5
+
+.code topic/telegram.go
+
+## UI - Menu
+
+&nbsp;
+
+- menu creation is done with `BotFather`
+
+.image img/telegram-menu.png
+
+## Telegram - updates
+
+&nbsp;
+
+- update.Message.Text
+- update.Message.From.ID
+- update.Message.Chat.ID
+
+.code topic/telegram2.go
+
+## Telegram - updates
+
+&nbsp;
+
+- update.CallbackQuery.Data
+- update.CallbackQuery.From.ID
+- update.CallbackQuery.Chat.ID
+
+.code topic/telegram3.go
+
+## Telegram - image
+
+&nbsp;
+
+.code topic/telegram4.go
+
+## UI image
+
+&nbsp;
+
+.image img/telegram-today.png
+
+## Telegram - buttons
+
+&nbsp;
+
+.code topic/telegram5.go
+
+## UI preview
+
+.image img/telegram-date.png

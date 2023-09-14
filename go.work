@@ -1,0 +1,13 @@
+go 1.21.1
+
+use (
+	./loopvar
+	./maps
+	./maps2
+	./min_max
+	./min_max3
+	./slices
+	./slices2
+	./slog
+	./slog2
+)
