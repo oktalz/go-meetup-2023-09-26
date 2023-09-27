@@ -33,6 +33,33 @@ zlatko.bratkovic@gmail.com
     - not perfect, scaling/zoom can revert behavior
     - TODO make fonts a bit bigger to avoid zoom
 
+## Presentation Go
+
+&nbsp;
+
+- `'r'` to run code snippet
+- `'c'` to close terminal view
+
+.play -edit hello/main.go /^//START/,/^//END/
+
+## Presentation - Python 
+
+&nbsp;
+
+- possible
+- without edit
+
+.code python/example.py 
+.play python/main.go /^//START/,/^//END/
+
+## Presentation - Python - edit code
+
+&nbsp;
+
+- with edit
+
+.play -edit python2/main.go /^//START/,/^//END/
+
 ## Go
 
 accepted:
@@ -74,6 +101,12 @@ proposals:
 &nbsp;
 
 .play -edit slog2\main.go /^//START/,/^//END/
+
+## zerolog - filename
+
+&nbsp;
+
+.code zerolog\main.go /^//START/,/^//END/
 
 ## min & max
 
